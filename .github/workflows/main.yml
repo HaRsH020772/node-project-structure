@@ -23,8 +23,6 @@ jobs:
 
       - name: Debug Info
         run: |
-          echo "Node Version:"
-          node --version
           echo "NPM Version:"
           npm --version
           echo "Memory Info:"
@@ -44,11 +42,11 @@ jobs:
             --memory-swap=4g \
             -t ${{ env.HARBOR_IMAGE_NAME }}:${{ env.VERSION }} .
         
-      - name: Show Docker Logs
-        if: always()
-        run: |
-          docker ps -a
-          docker logs $(docker ps -aq | head -n 1)
+      # - name: Show Docker Logs
+      #   if: always()
+      #   run: |
+      #     docker ps -a
+      #     docker logs $(docker ps -aq | head -n 1)
 
       - name: Build Docker Image
         run: |
