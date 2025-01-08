@@ -22,13 +22,8 @@ jobs:
           driver: docker
 
       - name: Build Docker Image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: false
-          tags: ${{ env.HARBOR_IMAGE_NAME }}:${{ env.VERSION }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+        run: |
+          docker build -t ${{ env.HARBOR_IMAGE_NAME }}:${{ env.VERSION }} .
 
       - name: Last step to check
         run: echo "🎉 This job uses runner scale set runners!"
