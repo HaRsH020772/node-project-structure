@@ -35,9 +35,6 @@ jobs:
           # Add --no-cache to force fresh build
           DOCKER_BUILDKIT=0 docker build \
             --no-cache \
-            --progress=plain \
-            --memory=4g \
-            --memory-swap=4g \
             -t ${{ env.HARBOR_IMAGE_NAME }}:${{ env.VERSION }} .
         
       # - name: Show Docker Logs
