@@ -31,4 +31,4 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t ${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE_NAME }}:${{ env.VERSION }} .
+          docker build -t ${{ env.HARBOR_IMAGE_NAME }}:${{ env.VERSION }} .
