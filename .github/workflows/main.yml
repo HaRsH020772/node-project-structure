@@ -23,8 +23,6 @@ jobs:
 
       - name: Debug Info
         run: |
-          echo "NPM Version:"
-          npm --version
           echo "Memory Info:"
           free -h
           echo "Disk Space:"
