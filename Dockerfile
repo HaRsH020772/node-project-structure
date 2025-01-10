@@ -1,55 +1,42 @@
-FROM node:20-alpine
+FROM harshalpatel2810/nodeminimal:20.17.0
 
 # Create app directory
+RUN mkdir -p /usr/src/crmapi
+RUN mkdir -p /usr/src/crmapi/gluster-data/media/uploadedFiles/
+RUN mkdir -p /usr/src/crmapi/gluster-data/media/ticket-excel/
+RUN mkdir -p /usr/src/crmapi/gluster-data/media/paymentInputs/
+
 WORKDIR /usr/src/crmapi
 
-# Install build dependencies first
-RUN apk add --no-cache \
-    bash \
-    g++ \
-    make \
-    python3 \
-    git \
-    expat \
-    expat-dev
 
-# Install build tools
-RUN apk add --no-cache --virtual .build-deps \
-    gcc \
-    libc-dev \
-    linux-headers \
-    ca-certificates \
-    lz4-dev \
-    musl-dev \
-    cyrus-sasl-dev \
-    openssl-dev \
-    zlib-dev \
-    bsd-compat-headers \
-    py-setuptools \
-    gcompat
+RUN apk add --no-cache bash
 
-# Create required directories
-RUN mkdir -p \
-    gluster-data/media/uploadedFiles/ \
-    gluster-data/media/ticket-excel/ \
-    gluster-data/media/paymentInputs/
+#For node-rdkafka when used with Alpine - START
+RUN apk --no-cache add bash g++ ca-certificates  lz4-dev  musl-dev cyrus-sasl-dev  openssl-dev make python3 
+RUN apk add --no-cache --virtual .build-deps gcc zlib-dev libc-dev bsd-compat-headers py-setuptools bash git gcompat
 
-# Copy package files
-COPY package*.json ./
 
-# Install dependencies with specific flags for node-expat
-RUN npm install --build-from-source --verbose && \
-    npm install bcrypt@4.0.1 --verbose
+# Bundle app source
+COPY . /usr/src/crmapi
+RUN rm -rf .git
 
-# Copy application code
-COPY . .
+ENV NODEJS_ORG_MIRROR=https://nodejs.org/download/release
+#Install npm packages
+RUN npm install --verbose
 
-# Copy libcouchbase
-# RUN cp /usr/src/crmapi/node_modules/inventyv-datalayer-pkg/lib/libcouchbase.so.6 /usr/lib/
+#RUN cp /usr/src/crmapi/node_modules/inventyv-datalayer-pkg/lib/libcouchbase.so.6 /usr/lib/
 
-# Cleanup
-RUN apk del .build-deps
+# Install couchbase and bcrypt 
+#RUN npm install bcrypt@4.0.1 --verbose
 
+#  couchbase@2.6.11
+# RUN npm install node-rdkafka@3.1.0 --verbose
+
+# Remove App dependencies
+RUN apk del python3 make g++ gcc
+
+# Expose the port
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+# Start Node.js Application with Cluster.js
+CMD [ "node", "server.js" ] 
